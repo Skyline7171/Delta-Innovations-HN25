@@ -43,6 +43,15 @@ object AppTextStyles {
         color = color_5,
         letterSpacing = 0.5.sp
     )
+
+    val bodyLargeGrey = TextStyle(
+        fontFamily = GintoNordRegular,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        color = variation_color_10,
+        letterSpacing = 0.5.sp
+    )
 }
 
 val Typography = Typography(

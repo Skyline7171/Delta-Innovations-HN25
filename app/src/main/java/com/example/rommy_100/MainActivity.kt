@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,8 +15,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Sos
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -35,7 +41,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.rommy_100.ui.theme.AppTextStyles
 import com.example.rommy_100.ui.theme.color_1
 import com.example.rommy_100.ui.theme.color_2
@@ -46,7 +55,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainScreenWithBottomBar()
+            AppNavigation()
         }
     }
 }
@@ -63,9 +72,16 @@ data class BottomNavigationItem(
 
 @OptIn(ExperimentalMaterial3Api::class) // Necesario para BadgedBox y algunos parámetros de NavigationBarItem
 @Composable
-fun MainScreenWithBottomBar() {
+fun MainScreen(navController: NavController) {
     // Lista de elementos para la barra de navegación
     val items = listOf(
+        BottomNavigationItem(
+            title = "Inicio",
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+            hasNews = false,
+            tint = color_3,
+        ),
         BottomNavigationItem(
             title = "Protocolos",
             selectedIcon = Icons.AutoMirrored.Filled.Assignment,
@@ -91,13 +107,18 @@ fun MainScreenWithBottomBar() {
     )
 
     // Estado para recordar el ítem seleccionado
-    var selectedItemIndex by remember { mutableIntStateOf(1) }
-    var selectedItemTitle by remember { mutableStateOf("Protocolos") }
+    var selectedItemIndex by remember { mutableIntStateOf(0) }
+    var selectedItemTitle by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                navigationIcon = { Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Menú",
+                    tint = color_3
+                ) },
                 title = { Text(selectedItemTitle, style = AppTextStyles.titleLarge) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = color_2, // Tu color deseado para el fondo
@@ -152,7 +173,24 @@ fun MainScreenWithBottomBar() {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Contenido de: ${items[selectedItemIndex].title}",style = AppTextStyles.bodyLarge)
+            if (selectedItemIndex == 0) {
+                Image(
+                    painter = painterResource(id = R.drawable.test2),
+                    contentDescription = "Asistente virtual",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(
+                            onClick = {
+                                navController.navigate(AppDestinations.ASSISTANT_ROUTE)
+                            },
+                            role = Role.Button,
+                            interactionSource = remember { MutableInteractionSource() },
+                        )
+                )
+            }
+            else {
+                Text(text = "Contenido de: ${items[selectedItemIndex].title}",style = AppTextStyles.bodyLarge)
+            }
         }
     }
 }
@@ -160,5 +198,5 @@ fun MainScreenWithBottomBar() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MainScreenWithBottomBar()
+    AppNavigation()
 }
