@@ -43,7 +43,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.rommy_100.ui.theme.AppTextStyles
 
 // Colores para el diálogo
-val DialogHeaderBlue = Color(0xFF2962FF) // Azul similar al de la imagen
+val DialogHeaderBlue = Color(0xFF2962FF)
 val DialogBackgroundDark = Color(0xFF212121) // Un gris oscuro para el cuerpo
 val DialogTextColorLight = Color.White
 val DialogTextColorMedium = Color(0xB3FFFFFF) // Blanco con algo de transparencia para subtítulos
@@ -86,7 +86,7 @@ fun EventDetailDialog(
                         Text(
                             text = "Hoy a las ${
                                 event.date.atTime(1, 14).toLocalTime()
-                            } - ${event.date.atTime(23, 0).toLocalTime()}", // Ejemplo de hora
+                            } - ${event.date.atTime(23, 0).toLocalTime()}", // Hora de inicio y fin
                             style = AppTextStyles.bodySmallBlack
                         )
                     }
@@ -152,7 +152,6 @@ private fun DialogRowItem(label: String, value: String, onClick: () -> Unit) {
             .clickable(onClick = onClick)
             .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        // horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = label, color = DialogTextColorLight, fontSize = 16.sp)
 
@@ -176,17 +175,6 @@ private fun DialogRowItem(label: String, value: String, onClick: () -> Unit) {
             tint = DialogTextColorMedium,
             modifier = Modifier.size(24.dp)
         )
-        /*
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = value, color = DialogTextColorMedium, fontSize = 16.sp)
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, // O Icons.Filled.KeyboardArrowRight
-                contentDescription = null,
-                tint = DialogTextColorMedium,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        */
     }
 }
 

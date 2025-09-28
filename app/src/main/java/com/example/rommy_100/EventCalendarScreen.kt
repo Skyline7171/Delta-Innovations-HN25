@@ -41,8 +41,7 @@ fun SectionTitle(title: String) {
 
 @Composable
 fun WeeklyEventsPlaceholder() {
-    // Placeholder para la fila de eventos semanales
-    // En una implementación real, usarías LazyRow con elementos de eventos reales
+    // Fila de eventos semanales
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -57,7 +56,7 @@ fun WeeklyEventsPlaceholder() {
 
 @Composable
 fun TodayEventPlaceholder() {
-    // Placeholder para la tarjeta del evento de hoy
+    // Tarjeta del evento de hoy
     EventCardPlaceholder(modifier = Modifier
         .fillMaxWidth()
         .height(120.dp))
@@ -114,13 +113,13 @@ fun EventCalendarScreen(/*innerPadding: PaddingValues*/) {
         // Sección "Eventos de esta semana"
         SectionTitle("Eventos de esta semana:")
         Spacer(modifier = Modifier.height(8.dp))
-        WeeklyEventsPlaceholder() // Placeholder para los eventos de la semana
+        WeeklyEventsPlaceholder() // Eventos de la semana
         Spacer(modifier = Modifier.height(12.dp))
 
         // Sección "Hoy"
         SectionTitle("Hoy")
         Spacer(modifier = Modifier.height(8.dp))
-        TodayEventPlaceholder() // Placeholder para el evento de hoy
+        TodayEventPlaceholder() // Evento de hoy
     }
 }
 

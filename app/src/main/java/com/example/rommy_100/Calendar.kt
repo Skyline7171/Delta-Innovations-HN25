@@ -51,7 +51,7 @@ data class MedicalEvent(
     val id: String,
     val title: String,
     val date: LocalDate,
-    val color: Color // Opcional, para distinguir tipos de eventos
+    val color: Color // Para distinguir tipos de eventos
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -75,7 +75,7 @@ fun CalendarWithEventsScreen(
         firstDayOfWeek = daysOfWeek.first()
     )
 
-    // Observar cambios en el mes visible para llamar al callback
+    // Observa cambios en el mes visible para llamar al callback
     LaunchedEffect(calendarState.firstVisibleMonth) {
         if (calendarState.firstVisibleMonth.yearMonth != currentMonth) {
             onMonthChanged(calendarState.firstVisibleMonth.yearMonth)
@@ -249,7 +249,6 @@ fun EventDetailsList(date: LocalDate, events: List<MedicalEvent>, onEventClick: 
                     Locale.getDefault()
                 )
             }:",
-            // style = MaterialTheme.typography.titleMedium,
             style = AppTextStyles.bodyLargeBlack,
             modifier = Modifier.padding(bottom = 8.dp)
         )

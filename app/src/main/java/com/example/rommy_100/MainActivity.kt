@@ -54,6 +54,7 @@ import com.example.rommy_100.ui.theme.color_2
 import com.example.rommy_100.ui.theme.color_3
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -138,7 +139,7 @@ fun MainScreen(navController: NavController) {
                         onClick = {
                             selectedItemIndex = index
                             selectedItemTitle = item.title
-                            // Aquí manejarías la navegación o la acción al hacer clic
+                            // Aquí manejaríamos la navegación o la acción al hacer clic
                             // Por ejemplo: navController.navigate(item.route)
                         },
                         label = { Text(text = item.title, style = AppTextStyles.labelSmall) },
@@ -169,7 +170,7 @@ fun MainScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
-        // Contenido principal de tu pantalla, que cambiaría según el ítem seleccionado
+        // Contenido principal de la pantalla, que cambiaría según el ítem seleccionado
         Box(
             modifier = Modifier
                 .padding(innerPadding)

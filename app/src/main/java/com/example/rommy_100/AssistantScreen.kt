@@ -87,7 +87,7 @@ data class ChatMessage(
     val sender: Sender,
     val content: MessageContentType,
     val timestamp: String,
-    val avatarRes: Int? = null, // R.drawable.test2 o R.drawable.ic_user_placeholder
+    val avatarRes: Int? = null,
     val avatarIcon: ImageVector? = null
 )
 
@@ -96,7 +96,7 @@ sealed class MessageContentTypeTest {
     data class Text(val text: String) : MessageContentType()
     data class Code(val code: String, val lang: String = "kotlin") : MessageContentType()
     data class Image(val painterRes: Int) :
-        MessageContentType() // Usar Int para PainterResource en preview
+        MessageContentType()
 
     data class Actions(val actions: List<String>) : MessageContentType()
 }
@@ -104,7 +104,7 @@ sealed class MessageContentType {
     data class Text(val text: String) : MessageContentType()
     data class Code(val code: String, val lang: String = "kotlin") : MessageContentType()
     data class Image(val painterRes: Int) :
-        MessageContentType() // Usar Int para PainterResource en preview
+        MessageContentType()
 
     data class Actions(val actions: List<String>) : MessageContentType()
 }
@@ -201,7 +201,7 @@ fun AiChatInputBar(
                 maxLines = 5,
                 minLines = 1,
                 trailingIcon = { // <--- USA trailingIcon
-                    IconButton(onClick = onSend) { // Hazlo clickeable si es necesario
+                    IconButton(onClick = onSend) {
                         Icon(
                             imageVector = Icons.Filled.ArrowUpward,
                             contentDescription = "Enviar",
@@ -263,7 +263,7 @@ fun ChatMessageItem(message: ChatMessage) {
                     )
                 )
                 .background(bubbleColor)
-                .drawBehind { // Dibujar la "cola" de la burbuja
+                .drawBehind { // Dibuja la "cola" de la burbuja
                     if (message.sender == Sender.USER && horizontalArrangement == Arrangement.End) {
                         val path = Path().apply {
                             moveTo(size.width, size.height - tailSize.toPx() - cornerRadius.toPx())
@@ -499,7 +499,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = variation_color_8, // Tu color deseado para el fondo
+                    containerColor = variation_color_8,
                 )
             )
         },
@@ -548,7 +548,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
             items(messages, key = { it.id }) { message ->
                 ChatMessageItem(message = message)
             }
-            // item { AiTypingIndicatorItem(avatarRes = R.drawable.test2) } // Descomentar para ver el indicador
+            // item { AiTypingIndicatorItem(avatarRes = R.drawable.test2) } // Esto mostrará lo típico de "La IA está escribiendo..."
         }
     }
 }
