@@ -21,7 +21,7 @@ fun AppNavigation() {
     // 2. Definir el NavHost
     NavHost(
         navController = navController,
-        startDestination = AppDestinations.ASSISTANT_ROUTE // La pantalla inicial
+        startDestination = AppDestinations.HOME_ROUTE // La pantalla inicial
     ) {
         // 3. Definir los destinos (pantallas)
         composable(route = AppDestinations.HOME_ROUTE) {

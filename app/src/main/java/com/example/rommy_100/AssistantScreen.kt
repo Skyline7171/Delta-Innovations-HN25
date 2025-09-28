@@ -1,5 +1,11 @@
 package com.example.rommy_100
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +63,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +72,7 @@ import com.example.rommy_100.ui.theme.AppTextStyles
 import com.example.rommy_100.ui.theme.color_3
 import com.example.rommy_100.ui.theme.color_5
 import com.example.rommy_100.ui.theme.color_6
+import com.example.rommy_100.ui.theme.variation_color_10
 import com.example.rommy_100.ui.theme.variation_color_7
 import com.example.rommy_100.ui.theme.variation_color_8
 
@@ -74,7 +82,7 @@ data class ChatMessage(
     val content: MessageContentType,
     val timestamp: String,
     val avatarRes: Int? = null, // R.drawable.test2 o R.drawable.ic_user_placeholder
-    val avatarIcon: ImageVector? = null // Puedes usar un ícono si prefieres
+    val avatarIcon: ImageVector? = null
 )
 
 enum class Sender { USER, AI }
@@ -117,12 +125,12 @@ fun AiChatInputBar(
                     )
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), // Fondo sutil
+                    focusedTextColor = variation_color_10,
+                    unfocusedTextColor = variation_color_10,
+                    focusedContainerColor = color_5,
                     unfocusedContainerColor = color_5,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    cursorColor = MaterialTheme.colorScheme.primary,
+                    // disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    // cursorColor = MaterialTheme.colorScheme.primary,
                     focusedIndicatorColor = Color.Transparent, // Sin línea indicadora para un look más limpio
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
@@ -132,14 +140,15 @@ fun AiChatInputBar(
                 maxLines = 5,
                 minLines = 1,
                 trailingIcon = { // <--- USA trailingIcon
-                    IconButton(onClick = {}) { // Hazlo clickeable si es necesario
+                    IconButton(onClick = onSend) { // Hazlo clickeable si es necesario
                         Icon(
                             imageVector = Icons.Filled.ArrowUpward,
                             contentDescription = "Enviar",
                             tint = color_3
                         )
                     }
-                }
+                },
+                textStyle = AppTextStyles.bodyLargeGrey,
             )
 
             val isTextEmpty = textValue.text.isBlank()
@@ -293,18 +302,73 @@ fun ChatMessageItem(message: ChatMessage) {
                 )
             }
             else {
-                message.avatarIcon?.let {
-                    Icon(
-                        imageVector = it,
-                        contentDescription = "Avatar Usuario",
-                        tint = variation_color_8,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                    )
+                message.avatarIcon.let {
+                    if (it != null) {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = "Avatar Usuario",
+                            tint = variation_color_8,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AiTypingIndicatorItem(avatarRes: Int) {
+    Row(
+        modifier = Modifier
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = avatarRes),
+            contentDescription = "Avatar IA",
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Animación de puntos
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            (1..3).forEach { index ->
+                val delay = index * 200
+                val infiniteTransition = rememberInfiniteTransition(label = "typing_dots")
+                val alpha by infiniteTransition.animateFloat(
+                    initialValue = 0.3f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = keyframes {
+                            durationMillis = 1200
+                            0.3f at 0 with LinearEasing
+                            1f at (300 + delay) with LinearEasing
+                            0.3f at (600 + delay) with LinearEasing
+                            0.3f at 1200 with LinearEasing
+                        },
+                        repeatMode = RepeatMode.Restart
+                    ), label = "dot_alpha_$index"
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha))
+                )
+            }
+        }
+        Text(
+            " IA está escribiendo...",
+            style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -318,7 +382,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                 Sender.AI,
                 MessageContentType.Text("¡Hola! Soy tu asistente de IA. ¿En qué puedo ayudarte hoy?"),
                 "10:00 AM",
-                R.drawable.test2
+                R.drawable.rommy
             ),
             ChatMessage(
                 "2",
@@ -346,10 +410,10 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.test),
+                            painter = painterResource(id = R.drawable.rommy),
                             contentDescription = "Avatar IA",
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(42.dp)
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -360,7 +424,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Acción de Menú/Volver */ }) {
+                    IconButton(onClick = { onNavigateBack.invoke() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver/Menú",
@@ -389,11 +453,22 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                                 (messages.size + 1).toString(),
                                 Sender.USER,
                                 MessageContentType.Text(inputText.text),
-                                "10:10 AM"
+                                "10:10 AM",
+                                null,
+                                Icons.Filled.AccountCircle
                             )
                         )
                         inputText = TextFieldValue("")
                         // Aquí la IA respondería
+                        messages.add(
+                            ChatMessage(
+                                (messages.size + 1).toString(),
+                                Sender.AI,
+                                MessageContentType.Text("¡Hola! desafortunadamente aún me encuentro en version de prueba, aún no he sido implementado/entrenado"),
+                                "10:11 AM",
+                                R.drawable.rommy
+                            )
+                        )
                     }
                 }
             )
@@ -417,7 +492,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun AssistantScreenPreview() {
     AppNavigation()

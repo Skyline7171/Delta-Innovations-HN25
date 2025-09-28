@@ -26,12 +26,30 @@ object AppTextStyles {
         letterSpacing = 0.sp
     )
 
+    val titleLargeBlack = TextStyle(
+        fontFamily = GintoNordRegular,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        color = Color.Black,
+        letterSpacing = 0.sp
+    )
+
     val labelSmall = TextStyle(
         fontFamily = GintoNordRegular,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         color = color_5,
+        letterSpacing = 0.5.sp
+    )
+
+    val labelSmallBlack = TextStyle(
+        fontFamily = GintoNordRegular,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        color = Color.Black,
         letterSpacing = 0.5.sp
     )
 
@@ -44,12 +62,30 @@ object AppTextStyles {
         letterSpacing = 0.5.sp
     )
 
+    val bodyLargeBlack = TextStyle(
+        fontFamily = GintoNordRegular,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        color = Color.Black,
+        letterSpacing = 0.5.sp
+    )
+
     val bodyLargeGrey = TextStyle(
         fontFamily = GintoNordRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         color = variation_color_10,
+        letterSpacing = 0.5.sp
+    )
+
+    val bodySmallBlack = TextStyle(
+        fontFamily = GintoNordRegular,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        color = Color.Black,
         letterSpacing = 0.5.sp
     )
 }

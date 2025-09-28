@@ -1,9 +1,12 @@
 package com.example.rommy_100
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,6 +73,7 @@ data class BottomNavigationItem(
     val badgeCount: Int? = null,
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class) // Necesario para BadgedBox y algunos parámetros de NavigationBarItem
 @Composable
 fun MainScreen(navController: NavController) {
@@ -173,28 +177,37 @@ fun MainScreen(navController: NavController) {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            if (selectedItemIndex == 0) {
-                Image(
-                    painter = painterResource(id = R.drawable.test2),
-                    contentDescription = "Asistente virtual",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            onClick = {
-                                navController.navigate(AppDestinations.ASSISTANT_ROUTE)
-                            },
-                            role = Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                        )
-                )
-            }
-            else {
-                Text(text = "Contenido de: ${items[selectedItemIndex].title}",style = AppTextStyles.bodyLarge)
+            when (selectedItemIndex) {
+                0 -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.rommy),
+                        contentDescription = "Asistente virtual",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(
+                                onClick = {
+                                    navController.navigate(AppDestinations.ASSISTANT_ROUTE)
+                                },
+                                role = Role.Button,
+                                interactionSource = remember { MutableInteractionSource() },
+                            )
+                    )
+                }
+                3 -> {
+                    // EventCalendarScreen(innerPadding)
+                    EventCalendarScreen()
+                }
+                else -> {
+                    Text(text = "Contenido de: ${items[selectedItemIndex].title}",style = AppTextStyles.bodyLarge)
+                }
             }
         }
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
