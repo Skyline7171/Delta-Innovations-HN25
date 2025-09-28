@@ -87,12 +87,11 @@ fun MainScreen(navController: NavController) {
             tint = color_3,
         ),
         BottomNavigationItem(
-            title = "Protocolos",
-            selectedIcon = Icons.AutoMirrored.Filled.Assignment,
-            unselectedIcon = Icons.AutoMirrored.Outlined.Assignment,
-            hasNews = false,
-            tint = color_3,
-            badgeCount = 23, // Mostrar un número en el badge
+            title = "Eventos",
+            selectedIcon = Icons.Filled.DateRange,
+            unselectedIcon = Icons.Outlined.DateRange,
+            hasNews = true, // Mostrar un punto de notificación
+            tint = color_3
         ),
         BottomNavigationItem(
             title = "SOS",
@@ -102,11 +101,12 @@ fun MainScreen(navController: NavController) {
             tint = color_3
         ),
         BottomNavigationItem(
-            title = "Eventos",
-            selectedIcon = Icons.Filled.DateRange,
-            unselectedIcon = Icons.Outlined.DateRange,
-            hasNews = true, // Mostrar un punto de notificación
-            tint = color_3
+            title = "Protocolos",
+            selectedIcon = Icons.AutoMirrored.Filled.Assignment,
+            unselectedIcon = Icons.AutoMirrored.Outlined.Assignment,
+            hasNews = false,
+            tint = color_3,
+            badgeCount = 23, // Mostrar un número en el badge
         )
     )
 
@@ -193,7 +193,7 @@ fun MainScreen(navController: NavController) {
                             )
                     )
                 }
-                3 -> {
+                1 -> {
                     // EventCalendarScreen(innerPadding)
                     EventCalendarScreen()
                 }

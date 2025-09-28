@@ -9,6 +9,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,12 +27,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +45,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -63,7 +67,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,6 +92,14 @@ data class ChatMessage(
 )
 
 enum class Sender { USER, AI }
+sealed class MessageContentTypeTest {
+    data class Text(val text: String) : MessageContentType()
+    data class Code(val code: String, val lang: String = "kotlin") : MessageContentType()
+    data class Image(val painterRes: Int) :
+        MessageContentType() // Usar Int para PainterResource en preview
+
+    data class Actions(val actions: List<String>) : MessageContentType()
+}
 sealed class MessageContentType {
     data class Text(val text: String) : MessageContentType()
     data class Code(val code: String, val lang: String = "kotlin") : MessageContentType()
@@ -93,6 +107,53 @@ sealed class MessageContentType {
         MessageContentType() // Usar Int para PainterResource en preview
 
     data class Actions(val actions: List<String>) : MessageContentType()
+}
+
+val AiCodeBackgroundColor = Color(0xFF2B2B2B)
+
+@Composable
+fun CodeBlockItem(code: String, language: String, textColor: Color) {
+    Surface(
+        color = AiCodeBackgroundColor,
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column {
+            Text(
+                text = code.trimIndent(),
+                fontFamily = FontFamily.Monospace,
+                fontSize = 13.sp,
+                color = Color.White.copy(alpha = 0.87f),
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 4.dp)
+                    .horizontalScroll(rememberScrollState()) // Para scroll horizontal si el código es largo
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    language.uppercase(),
+                    fontSize = 10.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.SemiBold
+                )
+                TextButton(onClick = { /* Copiar código */ }) {
+                    Icon(
+                        Icons.Filled.ContentCopy,
+                        contentDescription = "Copiar código",
+                        modifier = Modifier.size(16.dp),
+                        tint = Color.Gray
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("Copiar", fontSize = 12.sp, color = Color.Gray)
+                }
+            }
+        }
+    }
 }
 
 @Composable
