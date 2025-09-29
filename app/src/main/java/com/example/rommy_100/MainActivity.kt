@@ -22,14 +22,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Sos
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -62,12 +62,21 @@ import com.example.rommy_100.ui.theme.AppTextStyles
 import com.example.rommy_100.ui.theme.color_1
 import com.example.rommy_100.ui.theme.color_2
 import com.example.rommy_100.ui.theme.color_3
+import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // <------ Para el mapa ------>
+        val context = applicationContext
+        Configuration.getInstance().load(context,
+            context.getSharedPreferences("osmdroid", MODE_PRIVATE))
+        Configuration.getInstance().userAgentValue = context.packageName
+        // <------------------------->
+
         setContent {
             AppNavigation()
         }
@@ -79,7 +88,7 @@ data class BottomNavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val hasNews: Boolean, // Ejemplo de "badge" o notificación
+    val hasNews: Boolean, // "badge" o notificación
     val tint: Color,
     val badgeCount: Int? = null,
 )
@@ -112,12 +121,11 @@ fun MainScreen(navController: NavController) {
             tint = color_3
         ),
         BottomNavigationItem(
-            title = "Protocolos",
-            selectedIcon = Icons.AutoMirrored.Filled.Assignment,
-            unselectedIcon = Icons.AutoMirrored.Outlined.Assignment,
-            hasNews = false,
+            title = "Mapa",
+            selectedIcon = Icons.Filled.Map,
+            unselectedIcon = Icons.Outlined.Map,
             tint = color_3,
-            badgeCount = 23, // Mostrar un número en el badge
+            hasNews = false
         )
     )
 
@@ -221,6 +229,9 @@ fun MainScreen(navController: NavController) {
                 1 -> {
                     // EventCalendarScreen(innerPadding)
                     EventCalendarScreen()
+                }
+                3 -> {
+                    OSMMapView(Modifier.fillMaxSize())
                 }
                 else -> {
                     Text(text = "Contenido de: ${items[selectedItemIndex].title}",style = AppTextStyles.bodyLarge)
