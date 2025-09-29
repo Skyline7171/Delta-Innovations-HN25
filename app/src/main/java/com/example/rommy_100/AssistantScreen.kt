@@ -1,5 +1,7 @@
 package com.example.rommy_100
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -553,6 +555,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun AssistantScreenPreview() {

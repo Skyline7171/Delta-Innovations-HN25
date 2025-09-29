@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,7 +53,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.rommy_100.ui.theme.AppTextStyles
-import com.example.rommy_100.ui.theme.Rommy100Theme
 import com.example.rommy_100.ui.theme.color_2
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,13 +108,13 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp)) // Espacio superior
 
             Image(
-                painter = painterResource(id = R.drawable.rommy), // Reutiliza el logo
-                contentDescription = "Logo Roomy",
-                // modifier = Modifier.size(120.dp) // Ajusta el tamaño si lo ves necesario
+                painter = painterResource(id = R.drawable.rommy_smile), // Reutiliza el logo
+                contentDescription = "Logo Roomy Sonriendo",
+                modifier = Modifier.size(150.dp),
             )
 
             Text(
-                text = "¡Qué bueno verte de nuevo!",
+                text = "¡Que bueno verte de nuevo!",
                 style = AppTextStyles.titleLarge.copy(color = TextPrimaryColor, fontSize = 20.sp),
                 textAlign = TextAlign.Center
             )

@@ -73,13 +73,13 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround // Distribuye el espacio verticalmente
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.rommy),
-                contentDescription = "Asistente virtual",
-            )
-
             // Mensaje de Bienvenida
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.rommy),
+                    contentDescription = "Asistente virtual",
+                    modifier = Modifier.size(150.dp),
+                )
                 Text(
                     text = "¡Hola! Soy Roomy",
                     style = AppTextStyles.titleLarge.copy(

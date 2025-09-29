@@ -7,6 +7,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +20,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.outlined.Assignment
@@ -43,11 +50,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.rommy_100.ui.theme.AppTextStyles
 import com.example.rommy_100.ui.theme.color_1
 import com.example.rommy_100.ui.theme.color_2
@@ -113,7 +123,17 @@ fun MainScreen(navController: NavController) {
 
     // Estado para recordar el ítem seleccionado
     var selectedItemIndex by remember { mutableIntStateOf(0) }
-    var selectedItemTitle by remember { mutableStateOf("") }
+    var selectedItemTitle by remember { mutableStateOf(items[0].title) }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse_transition")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,      // Escala inicial
+        targetValue = 1.05f,    // Escala objetivo (un poco más grande)
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 700, easing = LinearEasing), // Duración de una palpitación
+            repeatMode = RepeatMode.Reverse // Revierte la animación para volver a la escala inicial
+        ), label = "pulse_scale_animation"
+    )
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -184,14 +204,18 @@ fun MainScreen(navController: NavController) {
                         painter = painterResource(id = R.drawable.rommy),
                         contentDescription = "Asistente virtual",
                         modifier = Modifier
-                            .fillMaxSize()
+                            .size(150.dp)
+                            .graphicsLayer( // Usamos graphicsLayer para una animación de escala eficiente
+                                scaleX = pulseScale,
+                                scaleY = pulseScale
+                            )
                             .clickable(
                                 onClick = {
                                     navController.navigate(AppDestinations.ASSISTANT_ROUTE)
                                 },
                                 role = Role.Button,
                                 interactionSource = remember { MutableInteractionSource() },
-                            )
+                            ),
                     )
                 }
                 1 -> {
@@ -212,5 +236,7 @@ fun MainScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    AppNavigation()
+    val fakeNavController = rememberNavController()
+    // AppNavigation()
+    MainScreen(navController = fakeNavController)
 }
