@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,6 +59,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,6 +85,10 @@ import com.example.rommy_100.ui.theme.color_6
 import com.example.rommy_100.ui.theme.variation_color_10
 import com.example.rommy_100.ui.theme.variation_color_7
 import com.example.rommy_100.ui.theme.variation_color_8
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class ChatMessage(
     val id: String,
@@ -112,6 +118,12 @@ sealed class MessageContentType {
 }
 
 val AiCodeBackgroundColor = Color(0xFF2B2B2B)
+
+// Función para obtener la hora actual formateada
+fun formatTimestamp(date: Date, locale: Locale): String { // Aquí sí se espera java.util.Locale
+    val sdf = SimpleDateFormat("hh:mm a", locale)
+    return sdf.format(date)
+}
 
 @Composable
 fun CodeBlockItem(code: String, language: String, textColor: Color) {
@@ -165,7 +177,9 @@ fun AiChatInputBar(
     onSend: () -> Unit
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
         color = variation_color_8,
         shadowElevation = 3.dp // Sensación de elevación
     ) {
@@ -202,7 +216,7 @@ fun AiChatInputBar(
                 shape = RoundedCornerShape(24.dp),
                 maxLines = 5,
                 minLines = 1,
-                trailingIcon = { // <--- USA trailingIcon
+                trailingIcon = {
                     IconButton(onClick = onSend) {
                         Icon(
                             imageVector = Icons.Filled.ArrowUpward,
@@ -242,7 +256,6 @@ fun ChatMessageItem(message: ChatMessage) {
                 contentDescription = "Avatar IA",
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(CircleShape)
                     .align(Alignment.Bottom) // Asegura que esté abajo si el mensaje es alto
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -395,7 +408,6 @@ fun AiTypingIndicatorItem(avatarRes: Int) {
             contentDescription = "Avatar IA",
             modifier = Modifier
                 .size(32.dp)
-                .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(12.dp))
 
@@ -423,14 +435,13 @@ fun AiTypingIndicatorItem(avatarRes: Int) {
                         .padding(horizontal = 2.dp)
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha))
+                        .background(variation_color_8.copy(alpha = alpha))
                 )
             }
         }
         Text(
-            " IA está escribiendo...",
-            style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            " Rommy está pensando...",
+            style = AppTextStyles.labelSmall.copy(fontStyle = FontStyle.Italic)
         )
     }
 }
@@ -438,27 +449,24 @@ fun AiTypingIndicatorItem(avatarRes: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AsisstantScreen(onNavigateBack: () -> Unit) {
+    val currentSystemLocale = LocalConfiguration.current.locales[0]
+    val timestamp = formatTimestamp(Date(), currentSystemLocale)
+
     val messages = remember {
         mutableStateListOf(
             ChatMessage(
                 "1",
                 Sender.AI,
                 MessageContentType.Text("¡Hola! Soy tu asistente de IA. ¿En qué puedo ayudarte hoy?"),
-                "10:00 AM",
+                timestamp,
                 R.drawable.rommy
-            ),
-            ChatMessage(
-                "2",
-                Sender.USER,
-                MessageContentType.Text("Hoy tuve una cita con mi nutricionista y necesito tu ayuda para seguir sus indicaciones sobre mis horarios de comida."),
-                "10:01 AM",
-                null,
-                Icons.Filled.AccountCircle
-            ),
+            )
         )
     }
     var inputText by remember { mutableStateOf(TextFieldValue("")) }
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope() // Para lanzar coroutines
+    var isAiTyping by remember { mutableStateOf(false) } // Estado para el indicador de escritura
 
     // Para scroll automático al nuevo mensaje
     LaunchedEffect(messages.size) {
@@ -477,22 +485,14 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                             contentDescription = "Avatar IA",
                             modifier = Modifier
                                 .size(42.dp)
-                                .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            "Rommy",
-                            style = AppTextStyles.titleLarge,
-                        )
+                        Text("Roomy", style = AppTextStyles.titleLarge)
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onNavigateBack.invoke() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver/Menú",
-                            tint = color_6
-                        )
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver", tint = color_6)
                     }
                 },
                 actions = {
@@ -500,9 +500,7 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                         Icon(Icons.Filled.MoreVert, contentDescription = "Más Opciones", tint = color_6)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = variation_color_8,
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = variation_color_8)
             )
         },
         bottomBar = {
@@ -510,28 +508,54 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
                 textValue = inputText,
                 onTextChange = { inputText = it },
                 onSend = {
-                    if (inputText.text.isNotBlank()) {
+                    val userMessageText = inputText.text.trim()
+                    if (userMessageText.isNotBlank()) {
+                        val timestamp = formatTimestamp(Date(), currentSystemLocale)
+                        // Añadir mensaje del usuario
                         messages.add(
                             ChatMessage(
                                 (messages.size + 1).toString(),
                                 Sender.USER,
-                                MessageContentType.Text(inputText.text),
-                                "10:10 AM",
+                                MessageContentType.Text(userMessageText),
+                                timestamp,
                                 null,
                                 Icons.Filled.AccountCircle
                             )
                         )
                         inputText = TextFieldValue("")
-                        // Aquí la IA respondería
-                        messages.add(
-                            ChatMessage(
-                                (messages.size + 1).toString(),
-                                Sender.AI,
-                                MessageContentType.Text("¡Hola! desafortunadamente aún me encuentro en version de prueba, aún no he sido implementado/entrenado"),
-                                "10:11 AM",
-                                R.drawable.rommy
+                        isAiTyping = true // Mostrar indicador de escritura
+
+                        // Lanzar coroutine para obtener respuesta de la IA
+                        coroutineScope.launch {
+                            val result = OpenRouterApiService.getChatCompletion(userMessageText)
+                            val timestamp = formatTimestamp(Date(), currentSystemLocale)
+                            isAiTyping = false // Ocultar indicador
+                            result.fold(
+                                onSuccess = { aiReply ->
+                                    messages.add(
+                                        ChatMessage(
+                                            (messages.size + 1).toString(),
+                                            Sender.AI,
+                                            MessageContentType.Text(aiReply),
+                                            timestamp,
+                                            R.drawable.rommy
+                                        )
+                                    )
+                                },
+                                onFailure = { error ->
+                                    val timestamp = formatTimestamp(Date(), currentSystemLocale)
+                                    messages.add(
+                                        ChatMessage(
+                                            (messages.size + 1).toString(),
+                                            Sender.AI,
+                                            MessageContentType.Text("⚠️ Error: ${error.message ?: "No se pudo conectar con el asistente."}"),
+                                            timestamp,
+                                            R.drawable.rommy
+                                        )
+                                    )
+                                }
                             )
-                        )
+                        }
                     }
                 }
             )
@@ -550,7 +574,12 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
             items(messages, key = { it.id }) { message ->
                 ChatMessageItem(message = message)
             }
-            // item { AiTypingIndicatorItem(avatarRes = R.drawable.test2) } // Esto mostrará lo típico de "La IA está escribiendo..."
+            // Mostrar indicador de escritura si isAiTyping es true
+            if (isAiTyping) {
+                item {
+                    AiTypingIndicatorItem(avatarRes = R.drawable.rommy) // Usa el avatar de Roomy
+                }
+            }
         }
     }
 }
@@ -559,5 +588,5 @@ fun AsisstantScreen(onNavigateBack: () -> Unit) {
 @Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun AssistantScreenPreview() {
-    AppNavigation()
+    AsisstantScreen(onNavigateBack = {})
 }
